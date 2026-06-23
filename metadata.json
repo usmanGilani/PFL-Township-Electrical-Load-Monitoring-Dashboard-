@@ -1,0 +1,6 @@
+{
+  "name": "PFL Township Load Monitor",
+  "description": "A township electrical load monitoring and analytics dashboard with real-time load calculation and advanced filtering from Google Sheets.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
