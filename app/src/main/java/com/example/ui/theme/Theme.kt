@@ -11,23 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
-private val DarkColorScheme =
-  darkColorScheme(
-    primary = GeoPrimary,
-    secondary = GeoSecondary,
-    tertiary = GeoTertiary,
-    background = Color(0xFF1E293B), // Dark slate-800
-    surface = Color(0xFF0F172A),    // Dark slate-900
-    onPrimary = GeoOnPrimary,
-    onSecondary = GeoOnSecondary,
-    onTertiary = GeoOnTertiary,
-    onBackground = Color(0xFFF1F5F9),
-    onSurface = Color(0xFFF1F5F9),
-    surfaceVariant = Color(0xFF334155),
-    onSurfaceVariant = Color(0xFF94A3B8),
-    outline = Color(0xFF475569)
-  )
-
 private val LightColorScheme =
   lightColorScheme(
     primary = GeoPrimary,
@@ -52,23 +35,17 @@ private val LightColorScheme =
     outlineVariant = GeoOutlineVariant
   )
 
+private val DarkColorScheme = LightColorScheme
+
 @Composable
 fun MyApplicationTheme(
   darkTheme: Boolean = isSystemInDarkTheme(),
-  // Disabling dynamicColor by default to prioritize the Geometric Balance theme
+  // Disabling dynamicColor by default to prioritize the minimalist white and black theme
   dynamicColor: Boolean = false,
   content: @Composable () -> Unit,
 ) {
-  val colorScheme =
-    when {
-      dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-        val context = LocalContext.current
-        if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-      }
-
-      darkTheme -> DarkColorScheme
-      else -> LightColorScheme
-    }
+  // Always use LightColorScheme to keep text black and background white
+  val colorScheme = LightColorScheme
 
   MaterialTheme(
     colorScheme = colorScheme,

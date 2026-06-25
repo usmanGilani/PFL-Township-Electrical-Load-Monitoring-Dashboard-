@@ -120,14 +120,14 @@ fun HouseDetailScreen(
                     .background(MaterialTheme.colorScheme.background)
                     .verticalScroll(scrollState)
             ) {
-                // House Hero Dashboard Summary Header
+                // Redesigned House Hero Dashboard
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(12.dp)
-                        .border(BorderStroke(1.dp, MaterialTheme.colorScheme.outline), shape = RoundedCornerShape(28.dp)),
+                        .padding(horizontal = 20.dp, vertical = 12.dp)
+                        .border(BorderStroke(1.dp, MaterialTheme.colorScheme.outline), shape = RoundedCornerShape(16.dp)),
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                    shape = RoundedCornerShape(28.dp),
+                    shape = RoundedCornerShape(16.dp),
                     elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                 ) {
                     Column(modifier = Modifier.padding(20.dp)) {
@@ -139,24 +139,30 @@ fun HouseDetailScreen(
                             Column {
                                 Text(
                                     "RESIDENT",
-                                    fontSize = 10.sp,
+                                    fontSize = 9.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.outline,
-                                    letterSpacing = 0.5.sp
+                                    letterSpacing = 1.sp
                                 )
                                 Text(
                                     record.residentName,
-                                    style = MaterialTheme.typography.titleLarge,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.onSurface
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.Black,
+                                    color = MaterialTheme.colorScheme.primary
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(Icons.Default.LocationOn, "Location", modifier = Modifier.size(12.dp), tint = MaterialTheme.colorScheme.primary)
+                                    Icon(
+                                        imageVector = Icons.Default.LocationOn,
+                                        contentDescription = "Location",
+                                        modifier = Modifier.size(12.dp),
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
                                     Spacer(modifier = Modifier.width(4.dp))
                                     Text(
-                                        "${record.getBlock()} • House ${record.houseNo}",
-                                        style = MaterialTheme.typography.bodySmall,
+                                        "BLOCK ${record.getBlock()} • UNIT ${record.houseNo}",
+                                        fontSize = 11.sp,
+                                        fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.outline
                                     )
                                 }
@@ -165,20 +171,21 @@ fun HouseDetailScreen(
                             // Dynamic Feeders Badge
                             Box(
                                 modifier = Modifier
-                                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), shape = RoundedCornerShape(8.dp))
-                                    .padding(horizontal = 12.dp, vertical = 6.dp)
+                                    .background(MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(6.dp))
+                                    .padding(horizontal = 10.dp, vertical = 4.dp)
                             ) {
                                 Text(
                                     text = record.gridFeeder,
-                                    fontSize = 10.sp,
+                                    fontSize = 9.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.primary
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    letterSpacing = 0.5.sp
                                 )
                             }
                         }
 
                         Spacer(modifier = Modifier.height(16.dp))
-                        HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.15f))
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outline, thickness = 1.dp)
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Row(
@@ -188,17 +195,17 @@ fun HouseDetailScreen(
                         ) {
                             Column {
                                 Text(
-                                    "CALCULATED PEAK LOAD",
-                                    fontSize = 10.sp,
+                                    "CONNECTED LOAD",
+                                    fontSize = 9.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.outline,
-                                    letterSpacing = 0.5.sp
+                                    letterSpacing = 1.sp
                                 )
                                 Text(
                                     text = String.format(Locale.getDefault(), "%.2f kW", totalLoadKw),
-                                    style = MaterialTheme.typography.headlineLarge,
+                                    fontSize = 28.sp,
                                     fontWeight = FontWeight.Black,
-                                    color = loadColor
+                                    color = MaterialTheme.colorScheme.primary
                                 )
                             }
 
@@ -207,21 +214,21 @@ fun HouseDetailScreen(
                             val totalQtyCount = ApplianceType.values().sumOf { record.getQuantity(it) }
                             Column(horizontalAlignment = Alignment.End) {
                                 Text(
-                                    "ELECTRICAL AUDIT",
-                                    fontSize = 10.sp,
+                                    "ELECTRICAL REGISTRY",
+                                    fontSize = 9.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.outline,
-                                    letterSpacing = 0.5.sp
+                                    letterSpacing = 1.sp
                                 )
                                 Text(
-                                    "$totalQtyCount units",
-                                    style = MaterialTheme.typography.titleMedium,
+                                    "$totalQtyCount units active",
+                                    fontSize = 15.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.onSurface
+                                    color = MaterialTheme.colorScheme.primary
                                 )
                                 Text(
-                                    "of $activeCount appliance types",
-                                    style = MaterialTheme.typography.bodySmall,
+                                    "across $activeCount appliance types",
+                                    fontSize = 11.sp,
                                     color = MaterialTheme.colorScheme.outline
                                 )
                             }
@@ -231,11 +238,12 @@ fun HouseDetailScreen(
 
                 // Title Section
                 Text(
-                    text = "APPLIANCE BREAKDOWN BY ENGINEERING CATEGORY",
+                    text = "APPLIANCE BREAKDOWN",
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.outline,
-                    modifier = Modifier.padding(start = 16.dp, top = 12.dp, bottom = 6.dp)
+                    color = MaterialTheme.colorScheme.primary,
+                    letterSpacing = 1.sp,
+                    modifier = Modifier.padding(start = 24.dp, top = 16.dp, bottom = 8.dp)
                 )
 
                 // Render categories inside M3 Cards
@@ -288,12 +296,12 @@ fun CategorySectionCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 12.dp, vertical = 6.dp)
-            .border(BorderStroke(1.dp, MaterialTheme.colorScheme.outline), shape = RoundedCornerShape(28.dp)),
-        shape = RoundedCornerShape(28.dp),
+            .padding(horizontal = 20.dp, vertical = 8.dp)
+            .border(BorderStroke(1.dp, MaterialTheme.colorScheme.outline), shape = RoundedCornerShape(16.dp)),
+        shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
-        Column(modifier = Modifier.padding(12.dp)) {
+        Column(modifier = Modifier.padding(16.dp)) {
             // Category Header with Subtotals
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -305,21 +313,23 @@ fun CategorySectionCard(
                         imageVector = categoryIcon,
                         contentDescription = category.displayName,
                         tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = category.displayName,
-                        fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.titleMedium
+                        text = category.displayName.uppercase(Locale.getDefault()),
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Black,
+                        color = MaterialTheme.colorScheme.primary,
+                        letterSpacing = 0.5.sp
                     )
                 }
 
                 Text(
                     text = if (totalCategoryLoadW >= 1000) String.format(Locale.getDefault(), "%.2f kW", totalCategoryLoadW / 1000.0) else "$totalCategoryLoadW W",
-                    fontWeight = FontWeight.Bold,
-                    color = if (category == ApplianceCategory.MAJOR_LOADS && totalCategoryLoadW > 0) loadColor else MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.titleMedium
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Black,
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
 

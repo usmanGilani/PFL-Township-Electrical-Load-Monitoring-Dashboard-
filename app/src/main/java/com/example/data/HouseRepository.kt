@@ -87,8 +87,14 @@ class HouseRepository(private val houseDao: HouseDao) {
     private fun parseCsv(reader: BufferedReader): List<HouseRecord> {
         val records = mutableListOf<HouseRecord>()
         
-        val firstLine = reader.readLine() ?: return emptyList()
-        val headers = parseCsvLine(firstLine)
+        var headerLine: String? = null
+        while (reader.readLine().also { headerLine = it } != null) {
+            if (headerLine != null && headerLine!!.trim().replace(",", "").replace("\"", "").trim().isNotEmpty()) {
+                break
+            }
+        }
+        if (headerLine == null) return emptyList()
+        val headers = parseCsvLine(headerLine!!)
         
         // Identify crucial column indices based on header names
         var residentNameIndex = -1

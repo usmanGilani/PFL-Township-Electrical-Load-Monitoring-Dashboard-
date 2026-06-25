@@ -277,8 +277,28 @@ enum class ApplianceType(
 
     companion object {
         fun fromId(id: String): ApplianceType? = values().find { it.id == id }
-        fun fromHeaderName(header: String): ApplianceType? = values().find { 
-            it.csvHeaderName.equals(header.trim(), ignoreCase = true) 
+
+        private fun normalizeHeader(h: String): String {
+            return h.trim()
+                .lowercase()
+                .replace("no. of", "")
+                .replace("no.", "")
+                .replace("lights", "light")
+                .replace("fan(s)", "fan")
+                .replace("fixture(s)", "fixture")
+                .replace("socket(s)", "socket")
+                .replace("flase", "false")
+                .replace("ceilng", "ceiling")
+                .replace("fasle", "false")
+                .replace("\\s+".toRegex(), " ")
+                .trim()
+        }
+
+        fun fromHeaderName(header: String): ApplianceType? {
+            val normalizedTarget = normalizeHeader(header)
+            return values().find { 
+                normalizeHeader(it.csvHeaderName) == normalizedTarget
+            }
         }
     }
 }

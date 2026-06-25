@@ -66,11 +66,21 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
     init {
-        // Prepopulate database with 600 houses if completely empty so the app is instantly ready
+        // Automatically fetch live electrical load data from the Google Sheets API endpoint on start
         viewModelScope.launch {
             repository.allRecords.first().let { current ->
                 if (current.isEmpty()) {
-                    loadSampleDataset()
+                    val defaultSheetUrl = "https://docs.google.com/spreadsheets/d/1kYndPjWpIlPpEEyCXp_ZuKnA_RoX84u_IEyjlIie7QY/edit?usp=drivesdk"
+                    Log.d("DashboardViewModel", "Prepopulating app with real-time data from sheet: $defaultSheetUrl")
+                    try {
+                        val count = repository.syncGoogleSheet(defaultSheetUrl)
+                        _syncState.value = SyncState.Success(count)
+                        kotlinx.coroutines.delay(2000)
+                        _syncState.value = SyncState.Idle
+                    } catch (e: Exception) {
+                        Log.e("DashboardViewModel", "Initial Google Sheet sync failed, falling back to sample data", e)
+                        loadSampleDataset()
+                    }
                 }
             }
         }

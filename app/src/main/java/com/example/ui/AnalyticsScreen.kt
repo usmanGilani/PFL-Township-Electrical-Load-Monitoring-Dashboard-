@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -74,65 +75,62 @@ fun AnalyticsScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        // Toolbar
-        TopAppBar(
-            title = {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    // Geometric Balance: Blue rounded-xl icon box
-                    Box(
-                        modifier = Modifier
-                            .size(40.dp)
-                            .background(MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(12.dp)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Analytics,
-                            contentDescription = "Analytics",
-                            tint = Color.White,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-                    Column {
-                        Text(
-                            text = "Appliance Analytics",
-                            fontWeight = FontWeight.Bold,
-                            style = MaterialTheme.typography.titleMedium,
-                            lineHeight = 16.sp
-                        )
-                        Text(
-                            text = "FIELD SURVEY & POWER CONTRIBUTION",
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.outline,
-                            letterSpacing = 0.5.sp
-                        )
-                    }
-                }
-            },
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = Color.Transparent
-            )
-        )
+        // Redesigned Masthead Toolbar
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp, vertical = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column {
+                Text(
+                    text = "APPLIANCE ANALYTICS",
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.outline,
+                    letterSpacing = 1.sp
+                )
+                Text(
+                    text = "Engineering Metrics",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Black,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
 
-        // Selected Appliance Selector Dropdown Card
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .background(MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(12.dp)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Analytics,
+                    contentDescription = "Analytics",
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+        }
+
+        // Sleek Selector Dropdown Card
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp)
-                .border(BorderStroke(1.dp, MaterialTheme.colorScheme.outline), shape = RoundedCornerShape(24.dp)),
-            shape = RoundedCornerShape(24.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                .padding(horizontal = 20.dp, vertical = 6.dp)
+                .border(BorderStroke(1.dp, MaterialTheme.colorScheme.outline), shape = RoundedCornerShape(16.dp)),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
                     text = "SELECT APPLIANCE TYPE FOR FIELD AUDIT",
-                    fontSize = 10.sp,
+                    fontSize = 8.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary,
-                    letterSpacing = 0.5.sp
+                    color = MaterialTheme.colorScheme.outline,
+                    letterSpacing = 1.sp
                 )
                 Spacer(modifier = Modifier.height(8.dp))
  
@@ -142,8 +140,12 @@ fun AnalyticsScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .testTag("appliance_selector_dropdown"),
-                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer, contentColor = MaterialTheme.colorScheme.onPrimaryContainer),
-                        shape = RoundedCornerShape(16.dp)
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
+                            contentColor = MaterialTheme.colorScheme.primary
+                        ),
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+                        shape = RoundedCornerShape(12.dp)
                     ) {
                         Row(
                             horizontalArrangement = Arrangement.SpaceBetween,
@@ -151,16 +153,22 @@ fun AnalyticsScreen(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(Icons.Default.Devices, "Appliance", modifier = Modifier.size(18.dp))
+                                Icon(
+                                    imageVector = Icons.Default.Devices,
+                                    contentDescription = "Appliance",
+                                    modifier = Modifier.size(16.dp),
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
                                     text = "${selectedAppliance.displayName} (${selectedAppliance.ratedWattage}W)",
+                                    fontSize = 13.sp,
                                     fontWeight = FontWeight.Bold,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis
                                 )
                             }
-                            Icon(Icons.Default.ArrowDropDown, "Open Dropdown")
+                            Icon(Icons.Default.ArrowDropDown, "Open Dropdown", modifier = Modifier.size(18.dp))
                         }
                     }
  
@@ -169,7 +177,7 @@ fun AnalyticsScreen(
                         onDismissRequest = { dropdownExpanded = false },
                         modifier = Modifier
                             .fillMaxWidth(0.9f)
-                            .heightIn(max = 400.dp)
+                            .heightIn(max = 320.dp)
                     ) {
                         ApplianceType.values().forEach { type ->
                             DropdownMenuItem(
@@ -198,30 +206,42 @@ fun AnalyticsScreen(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-            contentPadding = PaddingValues(bottom = 16.dp)
+                .padding(horizontal = 20.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            contentPadding = PaddingValues(top = 8.dp, bottom = 16.dp)
         ) {
             // 1. KPI Stats Summary row
             item {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     // KPI: Total Quantity
                     Card(
                         modifier = Modifier
                             .weight(1f)
-                            .border(BorderStroke(1.dp, MaterialTheme.colorScheme.outline), shape = RoundedCornerShape(20.dp)),
-                        shape = RoundedCornerShape(20.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                            .border(BorderStroke(1.dp, MaterialTheme.colorScheme.outline), shape = RoundedCornerShape(16.dp)),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                     ) {
                         Column(modifier = Modifier.padding(14.dp)) {
-                            Text("Total Installed", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.outline)
+                            Text(
+                                text = "INSTALLED",
+                                fontSize = 8.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.outline,
+                                letterSpacing = 0.5.sp
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "$totalQty units",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Black,
+                                color = MaterialTheme.colorScheme.primary
+                            )
                             Spacer(modifier = Modifier.height(2.dp))
-                            Text("$totalQty units", fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Text("Across township", fontSize = 9.sp, color = MaterialTheme.colorScheme.outline.copy(alpha = 0.8f))
+                            Text("Township total", fontSize = 10.sp, color = MaterialTheme.colorScheme.outline)
                         }
                     }
 
@@ -229,21 +249,28 @@ fun AnalyticsScreen(
                     Card(
                         modifier = Modifier
                             .weight(1.2f)
-                            .border(BorderStroke(1.dp, MaterialTheme.colorScheme.outline), shape = RoundedCornerShape(20.dp)),
-                        shape = RoundedCornerShape(20.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                            .border(BorderStroke(1.dp, MaterialTheme.colorScheme.outline), shape = RoundedCornerShape(16.dp)),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                     ) {
                         Column(modifier = Modifier.padding(14.dp)) {
-                            Text("Township Load", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.outline)
-                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = "TOTAL LOAD",
+                                fontSize = 8.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.outline,
+                                letterSpacing = 0.5.sp
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
                             Text(
                                 text = if (totalLoadKw >= 100.0) String.format(Locale.getDefault(), "%.1f kW", totalLoadKw) else String.format(Locale.getDefault(), "%.2f kW", totalLoadKw),
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Black,
                                 color = MaterialTheme.colorScheme.primary
                             )
                             Spacer(modifier = Modifier.height(2.dp))
-                            Text("Total rated power", fontSize = 9.sp, color = MaterialTheme.colorScheme.outline.copy(alpha = 0.8f))
+                            Text("Rated electrical load", fontSize = 10.sp, color = MaterialTheme.colorScheme.outline)
                         }
                     }
 
@@ -251,35 +278,50 @@ fun AnalyticsScreen(
                     Card(
                         modifier = Modifier
                             .weight(1f)
-                            .border(BorderStroke(1.dp, MaterialTheme.colorScheme.outline), shape = RoundedCornerShape(20.dp)),
-                        shape = RoundedCornerShape(20.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                            .border(BorderStroke(1.dp, MaterialTheme.colorScheme.outline), shape = RoundedCornerShape(16.dp)),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                     ) {
                         Column(modifier = Modifier.padding(14.dp)) {
-                            Text("Household Pen.", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.outline)
+                            Text(
+                                text = "PENETRATION",
+                                fontSize = 8.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.outline,
+                                letterSpacing = 0.5.sp
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = String.format(Locale.getDefault(), "%.1f%%", penetrationRate),
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Black,
+                                color = MaterialTheme.colorScheme.primary
+                            )
                             Spacer(modifier = Modifier.height(2.dp))
-                            Text(String.format(Locale.getDefault(), "%.1f%%", penetrationRate), fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Text("Of filtered homes", fontSize = 9.sp, color = MaterialTheme.colorScheme.outline.copy(alpha = 0.8f))
+                            Text("Filtered units", fontSize = 10.sp, color = MaterialTheme.colorScheme.outline)
                         }
                     }
                 }
             }
 
-            // 2. Block-Wise Proportional Distribution Bar Chart (Natively Styled with Material 3)
+            // 2. Block-Wise Proportional Distribution Bar Chart
             item {
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .border(BorderStroke(1.dp, MaterialTheme.colorScheme.outline), shape = RoundedCornerShape(28.dp)),
-                    shape = RoundedCornerShape(28.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                        .border(BorderStroke(1.dp, MaterialTheme.colorScheme.outline), shape = RoundedCornerShape(16.dp)),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                 ) {
                     Column(modifier = Modifier.padding(18.dp)) {
                         Text(
-                            text = "Block-wise Device Distribution",
+                            text = "BLOCK DISTRIBUTION",
+                            fontSize = 9.sp,
                             fontWeight = FontWeight.Bold,
-                            style = MaterialTheme.typography.titleSmall
+                            color = MaterialTheme.colorScheme.outline,
+                            letterSpacing = 1.sp
                         )
                         Spacer(modifier = Modifier.height(14.dp))
 
@@ -290,7 +332,7 @@ fun AnalyticsScreen(
                                     .padding(vertical = 16.dp),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text("No devices of this type installed in current filters.", fontSize = 11.sp, color = MaterialTheme.colorScheme.outline)
+                                Text("No active distributions found.", fontSize = 11.sp, color = MaterialTheme.colorScheme.outline)
                             }
                         } else {
                             val maxBlockQty = blockDistribution.maxOfOrNull { it.value }?.toFloat() ?: 1.0f
@@ -307,8 +349,8 @@ fun AnalyticsScreen(
                                         horizontalArrangement = Arrangement.SpaceBetween,
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                        Text(blockName, fontWeight = FontWeight.SemiBold, fontSize = 12.sp)
-                                        Text("$qty units (${String.format(Locale.getDefault(), "%.1f kW", loadKw)})", fontWeight = FontWeight.Bold, fontSize = 11.sp, color = MaterialTheme.colorScheme.primary)
+                                        Text("Block $blockName", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+                                        Text("$qty units (${String.format(Locale.getDefault(), "%.1f kW", loadKw)})", fontWeight = FontWeight.Black, fontSize = 11.sp, color = MaterialTheme.colorScheme.primary)
                                     }
                                     Spacer(modifier = Modifier.height(6.dp))
                                     
@@ -316,14 +358,14 @@ fun AnalyticsScreen(
                                     Box(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .height(8.dp)
-                                            .background(MaterialTheme.colorScheme.surfaceVariant, shape = RoundedCornerShape(4.dp))
+                                            .height(6.dp)
+                                            .background(MaterialTheme.colorScheme.outline, shape = CircleShape)
                                     ) {
                                         Box(
                                             modifier = Modifier
                                                 .fillMaxWidth(fraction)
                                                 .fillMaxHeight()
-                                                .background(MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(4.dp))
+                                                .background(MaterialTheme.colorScheme.primary, shape = CircleShape)
                                         )
                                     }
                                 }
@@ -338,21 +380,23 @@ fun AnalyticsScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 8.dp),
+                        .padding(top = 12.dp, bottom = 4.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "HOUSEHOLDS WITH ${selectedAppliance.displayName.uppercase()}",
-                        fontSize = 10.sp,
+                        text = "HOUSEHOLDS WITH ${selectedAppliance.displayName.uppercase(Locale.getDefault())}",
+                        fontSize = 9.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.outline
+                        color = MaterialTheme.colorScheme.outline,
+                        letterSpacing = 1.sp
                     )
                     Text(
-                        text = "${sortedHousesList.size} households",
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.primary
+                        text = "${sortedHousesList.size} UNITS",
+                        fontSize = 9.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary,
+                        letterSpacing = 0.5.sp
                     )
                 }
             }
@@ -363,9 +407,10 @@ fun AnalyticsScreen(
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .border(BorderStroke(1.dp, MaterialTheme.colorScheme.outline), shape = RoundedCornerShape(24.dp)),
-                        shape = RoundedCornerShape(24.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                            .border(BorderStroke(1.dp, MaterialTheme.colorScheme.outline), shape = RoundedCornerShape(16.dp)),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                     ) {
                         Box(
                             modifier = Modifier
@@ -374,9 +419,9 @@ fun AnalyticsScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Icon(Icons.Default.Inbox, "Empty", tint = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f), modifier = Modifier.size(36.dp))
+                                Icon(Icons.Default.Inbox, "Empty", tint = MaterialTheme.colorScheme.outline, modifier = Modifier.size(36.dp))
                                 Spacer(modifier = Modifier.height(8.dp))
-                                Text("No households own this appliance.", fontSize = 12.sp, color = MaterialTheme.colorScheme.outline)
+                                Text("No households own this appliance.", fontSize = 11.sp, color = MaterialTheme.colorScheme.outline)
                             }
                         }
                     }
@@ -390,7 +435,7 @@ fun AnalyticsScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable { onHouseClick(house.id) },
-                        shape = RoundedCornerShape(28.dp),
+                        shape = RoundedCornerShape(16.dp),
                         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
                         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
@@ -401,43 +446,42 @@ fun AnalyticsScreen(
                                 .padding(16.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            // Geometric Balance: Custom BLK block badge container
-                            Column(
+                            // Block Label
+                            Box(
                                 modifier = Modifier
-                                    .size(48.dp)
-                                    .background(Color(0xFFF8FAFC), shape = RoundedCornerShape(16.dp))
-                                    .border(BorderStroke(1.dp, Color(0xFFE2E8F0)), shape = RoundedCornerShape(16.dp)),
-                                verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.CenterHorizontally
+                                    .size(44.dp)
+                                    .background(MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(12.dp)),
+                                contentAlignment = Alignment.Center
                             ) {
-                                Text(
-                                    text = "BLK",
-                                    fontSize = 8.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.outline,
-                                    lineHeight = 10.sp
-                                )
-                                Text(
-                                    text = house.getBlock(),
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Black,
-                                    color = MaterialTheme.colorScheme.onSurface,
-                                    lineHeight = 18.sp
-                                )
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Text(
+                                        text = "BLK",
+                                        fontSize = 8.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f)
+                                    )
+                                    Text(
+                                        text = house.getBlock(),
+                                        fontSize = 15.sp,
+                                        fontWeight = FontWeight.Black,
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                                    )
+                                }
                             }
 
-                            Spacer(modifier = Modifier.width(16.dp))
+                            Spacer(modifier = Modifier.width(14.dp))
 
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
                                     text = "Unit ${house.houseNo}",
-                                    style = MaterialTheme.typography.titleMedium,
+                                    fontSize = 15.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
+                                Spacer(modifier = Modifier.height(2.dp))
                                 Text(
                                     text = house.residentName,
-                                    style = MaterialTheme.typography.bodySmall,
+                                    fontSize = 12.sp,
                                     color = MaterialTheme.colorScheme.outline,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis
@@ -451,17 +495,19 @@ fun AnalyticsScreen(
                                 Column(horizontalAlignment = Alignment.End) {
                                     Text(
                                         text = "$qty units",
-                                        fontWeight = FontWeight.Bold,
-                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontSize = 13.sp,
+                                        fontWeight = FontWeight.Black,
                                         color = MaterialTheme.colorScheme.primary
                                     )
+                                    Spacer(modifier = Modifier.height(2.dp))
                                     Text(
                                         text = String.format(Locale.getDefault(), "%.2f kW", contributionKw),
-                                        style = MaterialTheme.typography.labelSmall,
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.outline
                                     )
                                 }
-                                Icon(Icons.Default.ChevronRight, "Navigate", tint = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f), modifier = Modifier.size(16.dp))
+                                Icon(Icons.Default.ChevronRight, "Navigate", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp))
                             }
                         }
                     }

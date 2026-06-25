@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
@@ -62,7 +63,7 @@ fun DashboardScreen(
     // UI state
     var showSyncPanel by remember { mutableStateOf(false) }
     var showFilterPanel by remember { mutableStateOf(false) }
-    var sheetInputUrl by remember { mutableStateOf("") }
+    var sheetInputUrl by remember { mutableStateOf("https://docs.google.com/spreadsheets/d/1kYndPjWpIlPpEEyCXp_ZuKnA_RoX84u_IEyjlIie7QY/edit?usp=drivesdk") }
 
     val blocksList by viewModel.availableBlocks.collectAsStateWithLifecycle()
     val feedersList by viewModel.availableFeeders.collectAsStateWithLifecycle()
@@ -72,70 +73,73 @@ fun DashboardScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        // App Header Bar styled precisely to match Geometric Balance specifications
-        TopAppBar(
-            title = {
+        // Minimalist Masthead
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column {
+                Text(
+                    text = "GRID REGISTRY",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Black,
+                    letterSpacing = 1.sp,
+                    color = MaterialTheme.colorScheme.primary
+                )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    // Geometric Balance: Blue rounded-xl bolt icon box with shadow-lg
                     Box(
                         modifier = Modifier
-                            .size(40.dp)
-                            .background(MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(12.dp)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Bolt,
-                            contentDescription = "Bolt",
-                            tint = Color.White,
-                            modifier = Modifier.size(22.dp)
-                        )
-                    }
-                    Column {
-                        Text(
-                            text = "PFL Dashboard",
-                            fontWeight = FontWeight.Bold,
-                            style = MaterialTheme.typography.titleMedium,
-                            lineHeight = 16.sp
-                        )
-                        Text(
-                            text = "TOWNSHIP LOAD MONITORING",
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.outline,
-                            letterSpacing = 0.5.sp
-                        )
-                    }
+                            .size(6.dp)
+                            .background(Color(0xFF10B981), shape = CircleShape)
+                    )
+                    Text(
+                        text = "GRID STATUS: SECURE",
+                        fontSize = 9.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.outline,
+                        letterSpacing = 0.5.sp
+                    )
                 }
-            },
-            actions = {
-                IconButton(onClick = { showSyncPanel = !showSyncPanel }) {
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                IconButton(
+                    onClick = { showSyncPanel = !showSyncPanel },
+                    modifier = Modifier
+                        .size(40.dp)
+                        .background(
+                            if (showSyncPanel) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                ) {
                     Icon(
                         imageVector = Icons.Default.CloudSync,
                         contentDescription = "Sync Options",
-                        tint = if (showSyncPanel) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                        tint = if (showSyncPanel) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.size(20.dp)
                     )
                 }
                 IconButton(
-                    onClick = {
-                        // Profile engineering identity button
-                    },
-                    modifier = Modifier.padding(end = 4.dp)
+                    onClick = { /* Profile */ },
+                    modifier = Modifier.size(40.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.AccountCircle,
                         contentDescription = "Engineer Profile",
                         tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                        modifier = Modifier.size(28.dp)
+                        modifier = Modifier.size(24.dp)
                     )
                 }
-            },
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = Color.Transparent
-            )
-        )
+            }
+        }
 
         // Sync & Sheet URL Configuration Panel (Collapsible)
         AnimatedVisibility(
@@ -274,7 +278,7 @@ fun DashboardScreen(
             }
         }
 
-        // Geometric Balance: Quick Stats row
+        // Asymmetric Metric Dashboard
         val highDemandCount = remember(filteredRecords) {
             filteredRecords.count { house -> house.calculateTotalLoadKw() > 5.0 }
         }
@@ -282,113 +286,130 @@ fun DashboardScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 6.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                .padding(horizontal = 20.dp, vertical = 12.dp)
+                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f), shape = RoundedCornerShape(20.dp))
+                .border(BorderStroke(1.dp, MaterialTheme.colorScheme.outline), shape = RoundedCornerShape(20.dp))
+                .padding(20.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            // Card 1: Total Load
-            Card(
-                modifier = Modifier
-                    .weight(1f)
-                    .border(
-                        BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)),
-                        shape = RoundedCornerShape(24.dp)
-                    ),
-                shape = RoundedCornerShape(24.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        text = "TOTAL LOAD",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f),
-                        letterSpacing = 0.5.sp
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = String.format(Locale.getDefault(), "%,.0f kW", totalLoadKw),
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Light,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-                }
+            Column(modifier = Modifier.weight(1.2f)) {
+                Text(
+                    text = "TOTAL DEMAND LOAD",
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.outline,
+                    letterSpacing = 1.sp
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = String.format(Locale.getDefault(), "%,.1f kW", totalLoadKw),
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
+                    letterSpacing = (-0.5).sp
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = "Active across all feeders",
+                    fontSize = 11.sp,
+                    color = MaterialTheme.colorScheme.outline
+                )
             }
-
-            // Card 2: High Demand
-            Card(
+            
+            // Vertical hairline divider
+            Box(
+                modifier = Modifier
+                    .width(1.dp)
+                    .height(60.dp)
+                    .background(MaterialTheme.colorScheme.outline)
+            )
+            
+            Column(
                 modifier = Modifier
                     .weight(1f)
-                    .border(
-                        BorderStroke(1.dp, MaterialTheme.colorScheme.tertiary.copy(alpha = 0.15f)),
-                        shape = RoundedCornerShape(24.dp)
-                    ),
-                shape = RoundedCornerShape(24.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer)
+                    .padding(start = 20.dp)
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = "HEAVY DEMAND",
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.outline,
+                    letterSpacing = 1.sp
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Row(verticalAlignment = Alignment.Bottom) {
                     Text(
-                        text = "HIGH DEMAND",
-                        fontSize = 11.sp,
+                        text = "$highDemandCount",
+                        fontSize = 32.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.8f),
-                        letterSpacing = 0.5.sp
+                        color = if (highDemandCount > 0) Color(0xFFE11D48) else MaterialTheme.colorScheme.primary,
+                        letterSpacing = (-0.5).sp
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "$highDemandCount Units",
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Light,
-                        color = MaterialTheme.colorScheme.onTertiaryContainer
+                        text = " units",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.outline,
+                        modifier = Modifier.padding(bottom = 4.dp, start = 2.dp)
                     )
                 }
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = ">5.0 kW active load",
+                    fontSize = 11.sp,
+                    color = MaterialTheme.colorScheme.outline
+                )
             }
         }
 
         // Sub-Banner for Peak House Alert
         peakHouse?.let { peak ->
-            Card(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 4.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                shape = RoundedCornerShape(12.dp),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f))
+                    .padding(horizontal = 20.dp, vertical = 6.dp)
+                    .background(Color(0xFFFEF2F2), shape = RoundedCornerShape(14.dp))
+                    .border(BorderStroke(1.dp, Color(0xFFFCA5A5)), shape = RoundedCornerShape(14.dp))
+                    .clickable { onHouseClick(peak.id) }
+                    .padding(horizontal = 16.dp, vertical = 10.dp)
             ) {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { onHouseClick(peak.id) }
-                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
                         Icon(
                             imageVector = Icons.Default.Warning,
                             contentDescription = "Peak Load Alert",
-                            tint = MaterialTheme.colorScheme.tertiary,
+                            tint = Color(0xFFDC2626),
                             modifier = Modifier.size(16.dp)
                         )
-                        Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = "Peak House: ${peak.houseNo} (${peak.residentName})",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            text = String.format(Locale.getDefault(), "%.2f kW", peak.calculateTotalLoadKw()),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.tertiary,
+                            text = "Peak House: Unit ${peak.houseNo} (${peak.residentName})",
+                            fontSize = 11.sp,
+                            color = Color(0xFF991B1B),
                             fontWeight = FontWeight.Bold
                         )
-                        Spacer(modifier = Modifier.width(4.dp))
+                    }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Text(
+                            text = String.format(Locale.getDefault(), "%.2f kW", peak.calculateTotalLoadKw()),
+                            fontSize = 12.sp,
+                            color = Color(0xFFDC2626),
+                            fontWeight = FontWeight.Black
+                        )
                         Icon(
                             imageVector = Icons.Default.ChevronRight,
                             contentDescription = "View Details",
-                            tint = MaterialTheme.colorScheme.outline,
+                            tint = Color(0xFFDC2626),
                             modifier = Modifier.size(16.dp)
                         )
                     }
@@ -578,22 +599,21 @@ fun DashboardScreen(
             }
         }
 
-        // Active Search & Total Matches Banner with Geometric Balance styling
+        // Active Search Bar
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 4.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                .padding(horizontal = 20.dp, vertical = 6.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            TextField(
+            OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { viewModel.setSearchQuery(it) },
                 placeholder = {
                     Text(
-                        text = "Search ${allRecords.size} houses or blocks...",
+                        text = "Search units, blocks, or residents...",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                     )
                 },
                 singleLine = true,
@@ -601,7 +621,8 @@ fun DashboardScreen(
                     Icon(
                         imageVector = Icons.Default.Search,
                         contentDescription = "Search",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(18.dp)
                     )
                 },
                 trailingIcon = {
@@ -614,13 +635,17 @@ fun DashboardScreen(
                             val filtersActive = selectedBlock != "All" || selectedFeeder != "All" || selectedLoadRange != "All" || selectedApplianceFilter != null
                             BadgedBox(badge = {
                                 if (filtersActive) {
-                                    Badge { Text("!") }
+                                    Badge(
+                                        containerColor = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.size(6.dp)
+                                    )
                                 }
                             }) {
                                 Icon(
                                     imageVector = Icons.Default.Tune,
                                     contentDescription = "Filter List",
-                                    tint = if (showFilterPanel) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                                    tint = if (showFilterPanel) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.size(18.dp)
                                 )
                             }
                         }
@@ -628,16 +653,14 @@ fun DashboardScreen(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(54.dp)
                     .testTag("house_search_bar"),
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent
                 ),
-                shape = CircleShape
+                shape = RoundedCornerShape(16.dp)
             )
         }
 
@@ -753,136 +776,193 @@ fun HouseRecordCard(
     onClick: () -> Unit
 ) {
     val totalLoadKw = house.calculateTotalLoadKw()
-    
-    // Status badges styled using Tailwind semantic equivalents (Stable, Heavy, Critical)
-    val (loadColor, loadBg, loadLabel) = when {
-        totalLoadKw <= 2.0 -> Triple(Color(0xFF15803D), Color(0xFFDCFCE7), "Stable")
-        totalLoadKw <= 5.0 -> Triple(Color(0xFF15803D), Color(0xFFDCFCE7), "Stable")
-        totalLoadKw <= 10.0 -> Triple(Color(0xFFB45309), Color(0xFFFEF3C7), "Heavy")
-        else -> Triple(Color(0xFFB91C1C), Color(0xFFFEE2E2), "Critical")
-    }
-
     val totalApp = ApplianceType.values().sumOf { house.getQuantity(it) }
+    
+    // Modern neutral/slate colors for status tags
+    val (statusColor, statusBg, statusLabel) = when {
+        totalLoadKw <= 2.0 -> Triple(Color(0xFF0F766E), Color(0xFFF0FDFA), "OPTIONAL")
+        totalLoadKw <= 5.0 -> Triple(Color(0xFF0369A1), Color(0xFFF0F9FF), "STANDARD")
+        totalLoadKw <= 10.0 -> Triple(Color(0xFFB45309), Color(0xFFFFFBEB), "HEAVY LOAD")
+        else -> Triple(Color(0xFFE11D48), Color(0xFFFFF1F2), "CRITICAL")
+    }
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .testTag("house_card_${house.houseNo}")
             .clickable { onClick() },
-        shape = RoundedCornerShape(28.dp), // 3xl roundness matching theme
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp), // flat styling
+        shape = RoundedCornerShape(16.dp),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .padding(16.dp)
         ) {
-            // Geometric Balance: Custom BLK block badge container (w-12 h-12 bg-slate-50 border border-slate-200)
-            Column(
-                modifier = Modifier
-                    .size(48.dp)
-                    .background(Color(0xFFF8FAFC), shape = RoundedCornerShape(16.dp))
-                    .border(BorderStroke(1.dp, Color(0xFFE2E8F0)), shape = RoundedCornerShape(16.dp)),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = "BLK",
-                    fontSize = 8.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.outline,
-                    lineHeight = 10.sp
-                )
-                Text(
-                    text = house.getBlock(),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Black,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    lineHeight = 18.sp
-                )
-            }
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            // Main Details
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = "Unit ${house.houseNo}",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                
-                Text(
-                    text = "${house.residentName} • $totalApp App.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.outline,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                // Short preview icons (highly polished, elegant sizing)
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                // Architectural Block Label
+                Box(
+                    modifier = Modifier
+                        .size(44.dp)
+                        .background(MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(12.dp)),
+                    contentAlignment = Alignment.Center
                 ) {
-                    if (house.acQuantity > 0) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Default.AcUnit, "AC", modifier = Modifier.size(10.dp), tint = MaterialTheme.colorScheme.primary)
-                            Spacer(modifier = Modifier.width(2.dp))
-                            Text("${house.acQuantity} AC", fontSize = 9.sp, color = MaterialTheme.colorScheme.outline)
-                        }
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = "BLK",
+                            fontSize = 8.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f)
+                        )
+                        Text(
+                            text = house.getBlock(),
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Black,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
                     }
-                    if (house.ceilingFanQuantity > 0) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Default.Toys, "Fans", modifier = Modifier.size(10.dp), tint = Color(0xFF0D9488))
-                            Spacer(modifier = Modifier.width(2.dp))
-                            Text("${house.ceilingFanQuantity} Fan", fontSize = 9.sp, color = MaterialTheme.colorScheme.outline)
-                        }
-                    }
-                    if (house.socket20AQuantity > 0 || house.socket15AQuantity > 0) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Default.Power, "Power", modifier = Modifier.size(10.dp), tint = Color(0xFFD97706))
-                            Spacer(modifier = Modifier.width(2.dp))
-                            Text("${house.socket20AQuantity + house.socket15AQuantity} H-Socket", fontSize = 9.sp, color = MaterialTheme.colorScheme.outline)
-                        }
+                }
+
+                Spacer(modifier = Modifier.width(14.dp))
+
+                // Unit Info
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "Unit ${house.houseNo}",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = house.residentName,
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.outline,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
+                // Kilowatt load indicator
+                Column(horizontalAlignment = Alignment.End) {
+                    Text(
+                        text = String.format(Locale.getDefault(), "%.2f kW", totalLoadKw),
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(modifier = Modifier.height(3.dp))
+                    Box(
+                        modifier = Modifier
+                            .background(statusBg, shape = RoundedCornerShape(6.dp))
+                            .padding(horizontal = 6.dp, vertical = 2.dp)
+                    ) {
+                        Text(
+                            text = statusLabel,
+                            fontSize = 8.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = statusColor,
+                            letterSpacing = 0.5.sp
+                        )
                     }
                 }
             }
 
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.height(14.dp))
+            HorizontalDivider(color = MaterialTheme.colorScheme.outline, thickness = 1.dp)
+            Spacer(modifier = Modifier.height(12.dp))
 
-            // Load metric and dynamic status pill
-            Column(horizontalAlignment = Alignment.End) {
-                Text(
-                    text = String.format(Locale.getDefault(), "%.2f kW", totalLoadKw),
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = if (totalLoadKw > 10.0) Color(0xFFB91C1C) else MaterialTheme.colorScheme.onSurface
-                )
-                
-                Spacer(modifier = Modifier.height(4.dp))
-                
-                // Rounded-full badge
-                Box(
-                    modifier = Modifier
-                        .background(loadBg, shape = CircleShape)
-                        .padding(horizontal = 8.dp, vertical = 2.dp)
+            // Progress capacity bar
+            Column(modifier = Modifier.fillMaxWidth()) {
+                val progressFraction = (totalLoadKw / 12.0).coerceIn(0.0, 1.0).toFloat()
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = loadLabel,
-                        fontSize = 9.sp,
+                        text = "CAPACITY LOAD DEMAND",
+                        fontSize = 8.sp,
                         fontWeight = FontWeight.Bold,
-                        color = loadColor
+                        color = MaterialTheme.colorScheme.outline,
+                        letterSpacing = 0.5.sp
+                    )
+                    Text(
+                        text = "${(progressFraction * 100).toInt()}% of 12kW Max",
+                        fontSize = 8.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.outline
+                    )
+                }
+                Spacer(modifier = Modifier.height(4.dp))
+                // Minimal horizontal bar
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(4.dp)
+                        .background(MaterialTheme.colorScheme.outline, shape = CircleShape)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(progressFraction)
+                            .fillMaxHeight()
+                            .background(
+                                if (totalLoadKw > 10.0) Color(0xFFE11D48) else MaterialTheme.colorScheme.primary,
+                                shape = CircleShape
+                            )
                     )
                 }
             }
+
+            // Minimalist appliance categories row
+            if (totalApp > 0) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    if (house.acQuantity > 0) {
+                        AppliancePill(label = "${house.acQuantity} AC", icon = Icons.Default.AcUnit)
+                    }
+                    if (house.ceilingFanQuantity > 0) {
+                        AppliancePill(label = "${house.ceilingFanQuantity} FAN", icon = Icons.Default.Toys)
+                    }
+                    if (house.socket20AQuantity > 0 || house.socket15AQuantity > 0) {
+                        AppliancePill(label = "${house.socket20AQuantity + house.socket15AQuantity} HIGH-PWR", icon = Icons.Default.Power)
+                    }
+                }
+            }
         }
+    }
+}
+
+@Composable
+fun AppliancePill(label: String, icon: ImageVector) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.surfaceVariant, shape = RoundedCornerShape(6.dp))
+            .padding(horizontal = 6.dp, vertical = 2.dp)
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.size(10.dp),
+            tint = MaterialTheme.colorScheme.primary
+        )
+        Spacer(modifier = Modifier.width(3.dp))
+        Text(
+            text = label,
+            fontSize = 8.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
 
