@@ -45,7 +45,7 @@ fun SubstationsScreen(
     var selectedTabIndex by remember { mutableIntStateOf(0) }
 
     // Simulation states
-    var powerFactor by remember { mutableFloatStateOf(0.90f) }
+    val powerFactor = 0.85f
     var useFilteredScope by remember { mutableStateOf(false) }
     var selectedSubstationId by remember { mutableStateOf<Int?>(null) }
 
@@ -260,7 +260,6 @@ fun SubstationsScreen(
                     subColors = subColors,
                     subColorGradients = subColorGradients,
                     powerFactor = powerFactor,
-                    onPowerFactorChange = { powerFactor = it },
                     customWattages = customWattages,
                     selectedSubstationId = selectedSubstationId,
                     onSubstationIdChange = { selectedSubstationId = it },
@@ -295,7 +294,6 @@ fun GridsTabContent(
     subColors: List<Color>,
     subColorGradients: List<List<Color>>,
     powerFactor: Float,
-    onPowerFactorChange: (Float) -> Unit,
     customWattages: Map<ApplianceType, Int>,
     selectedSubstationId: Int?,
     onSubstationIdChange: (Int?) -> Unit,
@@ -337,7 +335,7 @@ fun GridsTabContent(
                         )
                         Spacer(modifier = Modifier.height(3.dp))
                         Text(
-                            text = "Grid stations operate completely independently on physically separated transformers. Load is never shared across grids. Managing overload spikes relies entirely on managing demand inside each isolated sector.",
+                            text = "Grid stations operate completely independently on physically separated transformers. Load is never shared across grids. Managing overload spikes relies entirely on managing demand inside each isolated sector. Configured with a fixed system Power Factor (PF) of 0.85.",
                             fontSize = 11.sp,
                             color = Color(0xFF78350F),
                             lineHeight = 15.sp
@@ -347,60 +345,6 @@ fun GridsTabContent(
             }
         }
 
-        // 2. Power Factor slider block
-        item {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant), shape = RoundedCornerShape(16.dp)),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Default.SettingsSuggest, "Power Factor", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp))
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(
-                                text = "Target Power Factor (PF)",
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-                        Text(
-                            text = String.format(Locale.getDefault(), "%.2f", powerFactor),
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Black,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(4.dp))
-
-                    Slider(
-                        value = powerFactor,
-                        onValueChange = { onPowerFactorChange(Math.round(it * 100f) / 100f) },
-                        valueRange = 0.80f..1.00f,
-                        steps = 19,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text("0.80 (Inductive Spike)", fontSize = 9.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Text("0.90 (Nominal)", fontSize = 9.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Text("1.00 (Ideal Unity)", fontSize = 9.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    }
-                }
-            }
-        }
 
         // 3. Three Independent Circular Gauges Side-by-Side
         item {
