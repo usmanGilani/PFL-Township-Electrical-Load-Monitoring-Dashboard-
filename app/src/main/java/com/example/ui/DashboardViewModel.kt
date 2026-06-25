@@ -1,6 +1,7 @@
 package com.example.ui
 
 import android.app.Application
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -74,7 +75,35 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
+    private val prefs = application.getSharedPreferences("appliance_prefs", Context.MODE_PRIVATE)
+
+    private val _customWattages = MutableStateFlow<Map<ApplianceType, Int>>(emptyMap())
+    val customWattages: StateFlow<Map<ApplianceType, Int>> = _customWattages.asStateFlow()
+
+    private fun loadCustomWattages() {
+        val map = mutableMapOf<ApplianceType, Int>()
+        ApplianceType.values().forEach { type ->
+            if (prefs.contains("wattage_${type.id}")) {
+                map[type] = prefs.getInt("wattage_${type.id}", type.ratedWattage)
+            }
+        }
+        _customWattages.value = map
+    }
+
+    fun updateApplianceWattage(type: ApplianceType, wattage: Int) {
+        prefs.edit().putInt("wattage_${type.id}", wattage).apply()
+        val newMap = _customWattages.value.toMutableMap()
+        newMap[type] = wattage
+        _customWattages.value = newMap
+    }
+
+    fun resetApplianceWattages() {
+        prefs.edit().clear().apply()
+        _customWattages.value = emptyMap()
+    }
+
     init {
+        loadCustomWattages()
         // Automatically fetch live electrical load data from the Google Sheets API endpoint on start
         viewModelScope.launch {
             repository.allRecords.first().let { current ->
@@ -103,7 +132,8 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
         selectedFeeder,
         selectedLoadRange,
         selectedApplianceFilter,
-        applianceMinQuantity
+        applianceMinQuantity,
+        customWattages
     ) { flowsArray ->
         @Suppress("UNCHECKED_CAST")
         val records = flowsArray[0] as List<HouseRecord>
@@ -113,6 +143,8 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
         val range = flowsArray[4] as String
         val appType = flowsArray[5] as ApplianceType?
         val minQty = flowsArray[6] as Int
+        @Suppress("UNCHECKED_CAST")
+        val wattages = flowsArray[7] as Map<ApplianceType, Int>
 
         records.filter { record ->
             // 1. Search filter (House No or Resident Name)
@@ -127,7 +159,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
             val matchesFeeder = feeder == "All" || record.gridFeeder.equals(feeder, ignoreCase = true)
 
             // 4. Load range filter
-            val totalLoadKw = record.calculateTotalLoadKw()
+            val totalLoadKw = record.calculateTotalLoadKw(wattages)
             val matchesRange = when (range) {
                 "All" -> true
                 "0-2 kW" -> totalLoadKw in 0.0..2.0
@@ -157,46 +189,43 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
         .map { list -> listOf("All") + list.map { it.gridFeeder }.distinct().sorted() }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), listOf("All"))
 
-    // Dynamic stats computations based on current filtered list
-    val totalTownshipLoadKw: StateFlow<Double> = filteredRecords
-        .map { list -> list.sumOf { it.calculateTotalLoad() } / 1000.0 }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0.0)
+    // Dynamic stats computations based on current filtered list and custom wattages
+    val totalTownshipLoadKw: StateFlow<Double> = combine(filteredRecords, customWattages) { list, wattages ->
+        list.sumOf { it.calculateTotalLoad(wattages) } / 1000.0
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0.0)
 
-    val averageHouseLoadKw: StateFlow<Double> = filteredRecords
-        .map { list -> 
-            if (list.isEmpty()) 0.0 
-            else (list.sumOf { it.calculateTotalLoad() }.toDouble() / list.size) / 1000.0 
-        }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0.0)
+    val averageHouseLoadKw: StateFlow<Double> = combine(filteredRecords, customWattages) { list, wattages ->
+        if (list.isEmpty()) 0.0 
+        else (list.sumOf { it.calculateTotalLoad(wattages) }.toDouble() / list.size) / 1000.0 
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0.0)
 
-    val peakLoadHouse: StateFlow<HouseRecord?> = filteredRecords
-        .map { list -> list.maxByOrNull { it.calculateTotalLoad() } }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+    val peakLoadHouse: StateFlow<HouseRecord?> = combine(filteredRecords, customWattages) { list, wattages ->
+        list.maxByOrNull { it.calculateTotalLoad(wattages) }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
-    // Appliance Analytics aggregates across all filtered records
-    val applianceAnalytics: StateFlow<List<ApplianceAnalyticRow>> = filteredRecords
-        .map { list ->
-            ApplianceType.values().map { type ->
-                var totalQty = 0
-                var totalW = 0
-                var houseCount = 0
-                list.forEach { record ->
-                    val qty = record.getQuantity(type)
-                    if (qty > 0) {
-                        totalQty += qty
-                        totalW += qty * type.ratedWattage
-                        houseCount++
-                    }
+    // Appliance Analytics aggregates across all filtered records and custom wattages
+    val applianceAnalytics: StateFlow<List<ApplianceAnalyticRow>> = combine(filteredRecords, customWattages) { list, wattages ->
+        ApplianceType.values().map { type ->
+            var totalQty = 0
+            var totalW = 0
+            var houseCount = 0
+            val ratedW = wattages[type] ?: type.ratedWattage
+            list.forEach { record ->
+                val qty = record.getQuantity(type)
+                if (qty > 0) {
+                    totalQty += qty
+                    totalW += qty * ratedW
+                    houseCount++
                 }
-                ApplianceAnalyticRow(
-                    applianceType = type,
-                    totalQuantity = totalQty,
-                    totalLoadKw = totalW / 1000.0,
-                    activeHousesCount = houseCount
-                )
-            }.sortedByDescending { it.totalLoadKw }
-        }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+            }
+            ApplianceAnalyticRow(
+                applianceType = type,
+                totalQuantity = totalQty,
+                totalLoadKw = totalW / 1000.0,
+                activeHousesCount = houseCount
+            )
+        }.sortedByDescending { it.totalLoadKw }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     // Actions
     fun setSearchQuery(query: String) {

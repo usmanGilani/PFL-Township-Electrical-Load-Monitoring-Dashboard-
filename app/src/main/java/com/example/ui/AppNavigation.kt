@@ -5,8 +5,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Analytics
 import androidx.compose.material.icons.filled.Dashboard
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Analytics
 import androidx.compose.material.icons.outlined.Dashboard
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -24,6 +26,7 @@ import androidx.navigation.navArgument
 sealed class Screen(val route: String, val title: String, val selectedIcon: ImageVector, val unselectedIcon: ImageVector) {
     object Dashboard : Screen("dashboard", "Dashboard", Icons.Filled.Dashboard, Icons.Outlined.Dashboard)
     object Analytics : Screen("analytics", "Analytics", Icons.Filled.Analytics, Icons.Outlined.Analytics)
+    object Appliances : Screen("appliances", "Appliances", Icons.Filled.Settings, Icons.Outlined.Settings)
     object HouseDetail : Screen("detail/{id}", "House Detail", Icons.Filled.Dashboard, Icons.Outlined.Dashboard) {
         fun createRoute(id: Int) = "detail/$id"
     }
@@ -40,13 +43,14 @@ fun MainAppNavigation(
 
     val items = listOf(
         Screen.Dashboard,
-        Screen.Analytics
+        Screen.Analytics,
+        Screen.Appliances
     )
 
     Scaffold(
         bottomBar = {
-            // Only show bottom bar on core level destinations (Dashboard and Analytics)
-            val showBottomBar = currentRoute in listOf(Screen.Dashboard.route, Screen.Analytics.route)
+            // Only show bottom bar on core level destinations (Dashboard, Analytics and Appliances)
+            val showBottomBar = currentRoute in listOf(Screen.Dashboard.route, Screen.Analytics.route, Screen.Appliances.route)
             if (showBottomBar) {
                 androidx.compose.foundation.layout.Column {
                     HorizontalDivider(
@@ -121,6 +125,11 @@ fun MainAppNavigation(
                         viewModel.setSelectedHouseId(houseId)
                         navController.navigate(Screen.HouseDetail.createRoute(houseId))
                     }
+                )
+            }
+            composable(Screen.Appliances.route) {
+                AppliancesConfigScreen(
+                    viewModel = viewModel
                 )
             }
             composable(

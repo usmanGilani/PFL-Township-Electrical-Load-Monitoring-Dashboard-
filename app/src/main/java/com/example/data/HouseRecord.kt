@@ -92,31 +92,32 @@ data class HouseRecord(
     /**
      * Total load contribution for a single appliance type in Watts.
      */
-    fun getLoadContribution(type: ApplianceType): Int {
-        return getQuantity(type) * type.ratedWattage
+    fun getLoadContribution(type: ApplianceType, customWattages: Map<ApplianceType, Int> = emptyMap()): Int {
+        val wattage = customWattages[type] ?: type.ratedWattage
+        return getQuantity(type) * wattage
     }
 
     /**
      * Total Connected Load in Watts
      */
-    fun calculateTotalLoad(): Int {
-        return ApplianceType.values().sumOf { getLoadContribution(it) }
+    fun calculateTotalLoad(customWattages: Map<ApplianceType, Int> = emptyMap()): Int {
+        return ApplianceType.values().sumOf { getLoadContribution(it, customWattages) }
     }
 
     /**
      * Total Connected Load in kilowatts (kW)
      */
-    fun calculateTotalLoadKw(): Double {
-        return calculateTotalLoad() / 1000.0
+    fun calculateTotalLoadKw(customWattages: Map<ApplianceType, Int> = emptyMap()): Double {
+        return calculateTotalLoad(customWattages) / 1000.0
     }
 
     /**
      * Calculated load per category in Watts
      */
-    fun calculateCategoryLoad(category: ApplianceCategory): Int {
+    fun calculateCategoryLoad(category: ApplianceCategory, customWattages: Map<ApplianceType, Int> = emptyMap()): Int {
         return ApplianceType.values()
             .filter { it.category == category }
-            .sumOf { getLoadContribution(it) }
+            .sumOf { getLoadContribution(it, customWattages) }
     }
 
     /**

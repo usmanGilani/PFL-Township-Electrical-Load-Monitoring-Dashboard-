@@ -39,6 +39,7 @@ fun HouseDetailScreen(
     modifier: Modifier = Modifier
 ) {
     val house by viewModel.selectedHouse.collectAsStateWithLifecycle()
+    val customWattages by viewModel.customWattages.collectAsStateWithLifecycle()
     var showZeroQuantity by remember { mutableStateOf(false) }
 
     // Make sure we have selected the correct house ID inside the ViewModel
@@ -103,7 +104,7 @@ fun HouseDetailScreen(
             }
         } else {
             val scrollState = rememberScrollState()
-            val totalLoadKw = record.calculateTotalLoadKw()
+            val totalLoadKw = record.calculateTotalLoadKw(customWattages)
 
             // Safety risk color styling
             val loadColor = when {
@@ -262,7 +263,8 @@ fun HouseDetailScreen(
                             category = category,
                             items = itemsToRender,
                             record = record,
-                            loadColor = loadColor
+                            loadColor = loadColor,
+                            customWattages = customWattages
                         )
                     }
                 }
@@ -282,9 +284,10 @@ fun CategorySectionCard(
     category: ApplianceCategory,
     items: List<ApplianceType>,
     record: HouseRecord,
-    loadColor: Color
+    loadColor: Color,
+    customWattages: Map<ApplianceType, Int>
 ) {
-    val totalCategoryLoadW = record.calculateCategoryLoad(category)
+    val totalCategoryLoadW = record.calculateCategoryLoad(category, customWattages)
     val categoryIcon = when (category) {
         ApplianceCategory.MAJOR_LOADS -> Icons.Default.AcUnit
         ApplianceCategory.FANS -> Icons.Default.Toys
@@ -369,7 +372,8 @@ fun CategorySectionCard(
                 // Items list
                 items.forEach { type ->
                     val qty = record.getQuantity(type)
-                    val contribution = record.getLoadContribution(type)
+                    val contribution = record.getLoadContribution(type, customWattages)
+                    val ratedW = customWattages[type] ?: type.ratedWattage
                     
                     Row(
                         modifier = Modifier
@@ -406,7 +410,7 @@ fun CategorySectionCard(
 
                         // Rating Column
                         Text(
-                            text = "${type.ratedWattage} W",
+                            text = "$ratedW W",
                             modifier = Modifier.weight(0.7f),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,

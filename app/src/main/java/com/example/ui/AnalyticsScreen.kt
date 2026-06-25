@@ -36,15 +36,17 @@ fun AnalyticsScreen(
 ) {
     val allRecords by viewModel.allRecords.collectAsStateWithLifecycle()
     val filteredRecords by viewModel.filteredRecords.collectAsStateWithLifecycle()
+    val customWattages by viewModel.customWattages.collectAsStateWithLifecycle()
     
     // Dropdown selection state
     var selectedAppliance by remember { mutableStateOf(ApplianceType.AC) }
     var dropdownExpanded by remember { mutableStateOf(false) }
 
     // Dynamic aggregates based on selected appliance type and currently filtered list
+    val selectedApplianceWattage = customWattages[selectedAppliance] ?: selectedAppliance.ratedWattage
     val housesWithAppliance = filteredRecords.filter { it.getQuantity(selectedAppliance) > 0 }
     val totalQty = housesWithAppliance.sumOf { it.getQuantity(selectedAppliance) }
-    val totalLoadW = totalQty * selectedAppliance.ratedWattage
+    val totalLoadW = totalQty * selectedApplianceWattage
     val totalLoadKw = totalLoadW / 1000.0
     
     // Penetration percentage
@@ -161,7 +163,7 @@ fun AnalyticsScreen(
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = "${selectedAppliance.displayName} (${selectedAppliance.ratedWattage}W)",
+                                    text = "${selectedAppliance.displayName} (${selectedApplianceWattage}W)",
                                     fontSize = 13.sp,
                                     fontWeight = FontWeight.Bold,
                                     maxLines = 1,
@@ -180,6 +182,7 @@ fun AnalyticsScreen(
                             .heightIn(max = 320.dp)
                     ) {
                         ApplianceType.values().forEach { type ->
+                            val ratedW = customWattages[type] ?: type.ratedWattage
                             DropdownMenuItem(
                                 text = {
                                     Row(
@@ -187,7 +190,7 @@ fun AnalyticsScreen(
                                         horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
                                         Text(type.displayName, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
-                                        Text("${type.ratedWattage}W", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+                                        Text("${ratedW}W", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
                                     }
                                 },
                                 onClick = {
@@ -340,7 +343,7 @@ fun AnalyticsScreen(
                             blockDistribution.forEach { entry ->
                                 val blockName = entry.key
                                 val qty = entry.value
-                                val loadKw = (qty * selectedAppliance.ratedWattage) / 1000.0
+                                val loadKw = (qty * selectedApplianceWattage) / 1000.0
                                 val fraction = qty.toFloat() / maxBlockQty
 
                                 Column(modifier = Modifier.padding(vertical = 6.dp)) {
@@ -429,7 +432,7 @@ fun AnalyticsScreen(
             } else {
                 items(sortedHousesList, key = { it.id }) { house ->
                     val qty = house.getQuantity(selectedAppliance)
-                    val contributionKw = (qty * selectedAppliance.ratedWattage) / 1000.0
+                    val contributionKw = (qty * selectedApplianceWattage) / 1000.0
 
                     Card(
                         modifier = Modifier
