@@ -7,6 +7,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.data.ApplianceType
 import com.example.data.HouseRecord
+import com.example.ui.theme.AppTheme
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -102,7 +104,7 @@ fun DashboardScreen(
                         text = "GRID STATUS: SECURE",
                         fontSize = 9.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.outline,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         letterSpacing = 0.5.sp
                     )
                 }
@@ -150,8 +152,10 @@ fun DashboardScreen(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(12.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+                    .padding(12.dp)
+                    .border(BorderStroke(1.dp, MaterialTheme.colorScheme.outline), shape = RoundedCornerShape(12.dp)),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                shape = RoundedCornerShape(12.dp)
             ) {
                 Column(modifier = Modifier.padding(12.dp)) {
                     Text(
@@ -274,6 +278,86 @@ fun DashboardScreen(
                         }
                         else -> {}
                     }
+
+                    // Dynamic Theme Selector Segment
+                    HorizontalDivider(
+                        modifier = Modifier.padding(vertical = 12.dp),
+                        color = MaterialTheme.colorScheme.outlineVariant,
+                        thickness = 1.dp
+                    )
+
+                    Text(
+                        text = "Customize Application Theme",
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = "Instantly change the visual interface, accent colors, and dark mode configuration:",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    val currentTheme by viewModel.currentTheme.collectAsStateWithLifecycle()
+
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        items(AppTheme.values()) { themeOption ->
+                            val isSelected = currentTheme == themeOption
+                            val borderCol = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline.copy(alpha = 0.4f)
+                            val borderThickness = if (isSelected) 2.dp else 1.dp
+
+                            // Swatch colors for previews
+                            val (bgPreview, primaryPreview, secondaryPreview) = when (themeOption) {
+                                AppTheme.NORDIC_SLATE -> Triple(Color(0xFFFFFFFF), Color(0xFF000000), Color(0xFF334155))
+                                AppTheme.CYBERPUNK_NEON -> Triple(Color(0xFF070A13), Color(0xFF06B6D4), Color(0xFFD946EF))
+                                AppTheme.SAGE_GARDEN -> Triple(Color(0xFFFAFBF9), Color(0xFF1E3F20), Color(0xFF4A6B53))
+                                AppTheme.ROYAL_OBSIDIAN -> Triple(Color(0xFF0A0A0A), Color(0xFFD4AF37), Color(0xFFF3E5AB))
+                            }
+
+                            Card(
+                                modifier = Modifier
+                                    .width(140.dp)
+                                    .clickable { viewModel.setCurrentTheme(themeOption) }
+                                    .border(
+                                        BorderStroke(borderThickness, borderCol),
+                                        shape = RoundedCornerShape(8.dp)
+                                    ),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = if (isSelected) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.2f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                                ),
+                                shape = RoundedCornerShape(8.dp)
+                            ) {
+                                Column(
+                                    modifier = Modifier.padding(8.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier.padding(bottom = 6.dp)
+                                    ) {
+                                        Box(modifier = Modifier.size(14.dp).background(bgPreview, shape = CircleShape).border(0.5.dp, Color.Gray, CircleShape))
+                                        Box(modifier = Modifier.size(14.dp).background(primaryPreview, shape = CircleShape))
+                                        Box(modifier = Modifier.size(14.dp).background(secondaryPreview, shape = CircleShape))
+                                    }
+
+                                    Text(
+                                        text = themeOption.displayName,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        fontSize = 11.sp,
+                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                                        textAlign = TextAlign.Center,
+                                        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -298,7 +382,7 @@ fun DashboardScreen(
                     text = "TOTAL DEMAND LOAD",
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.outline,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     letterSpacing = 1.sp
                 )
                 Spacer(modifier = Modifier.height(4.dp))
@@ -313,7 +397,7 @@ fun DashboardScreen(
                 Text(
                     text = "Active across all feeders",
                     fontSize = 11.sp,
-                    color = MaterialTheme.colorScheme.outline
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
             
@@ -334,7 +418,7 @@ fun DashboardScreen(
                     text = "HEAVY DEMAND",
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.outline,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     letterSpacing = 1.sp
                 )
                 Spacer(modifier = Modifier.height(4.dp))
@@ -350,7 +434,7 @@ fun DashboardScreen(
                         text = " units",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.outline,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(bottom = 4.dp, start = 2.dp)
                     )
                 }
@@ -358,7 +442,7 @@ fun DashboardScreen(
                 Text(
                     text = ">5.0 kW active load",
                     fontSize = 11.sp,
-                    color = MaterialTheme.colorScheme.outline
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
@@ -426,8 +510,9 @@ fun DashboardScreen(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 4.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                    .padding(horizontal = 12.dp, vertical = 4.dp)
+                    .border(BorderStroke(1.dp, MaterialTheme.colorScheme.outline), shape = RoundedCornerShape(12.dp)),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Column(modifier = Modifier.padding(12.dp)) {
@@ -675,7 +760,7 @@ fun DashboardScreen(
             Text(
                 text = "Showing ${filteredRecords.size} of ${allRecords.size} Houses",
                 style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.outline,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontWeight = FontWeight.Bold
             )
 
@@ -842,7 +927,7 @@ fun HouseRecordCard(
                     Text(
                         text = house.residentName,
                         fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.outline,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -889,14 +974,14 @@ fun HouseRecordCard(
                         text = "CAPACITY LOAD DEMAND",
                         fontSize = 8.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.outline,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         letterSpacing = 0.5.sp
                     )
                     Text(
                         text = "${(progressFraction * 100).toInt()}% of 12kW Max",
                         fontSize = 8.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.outline
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
                 Spacer(modifier = Modifier.height(4.dp))
@@ -1003,7 +1088,7 @@ fun EmptyHousesState(
             },
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.outline
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Spacer(modifier = Modifier.height(20.dp))
         if (isDatabaseEmpty) {

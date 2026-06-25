@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.*
+import com.example.ui.theme.AppTheme
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -32,6 +33,14 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
     // Sync state
     private val _syncState = MutableStateFlow<SyncState>(SyncState.Idle)
     val syncState: StateFlow<SyncState> = _syncState.asStateFlow()
+
+    // Dynamic Theme state
+    private val _currentTheme = MutableStateFlow(AppTheme.NORDIC_SLATE)
+    val currentTheme: StateFlow<AppTheme> = _currentTheme.asStateFlow()
+
+    fun setCurrentTheme(theme: AppTheme) {
+        _currentTheme.value = theme
+    }
 
     // Filter states
     private val _searchQuery = MutableStateFlow("")

@@ -88,7 +88,7 @@ fun AnalyticsScreen(
                     text = "APPLIANCE ANALYTICS",
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.outline,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     letterSpacing = 1.sp
                 )
                 Text(
@@ -129,7 +129,7 @@ fun AnalyticsScreen(
                     text = "SELECT APPLIANCE TYPE FOR FIELD AUDIT",
                     fontSize = 8.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.outline,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     letterSpacing = 1.sp
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -187,7 +187,7 @@ fun AnalyticsScreen(
                                         horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
                                         Text(type.displayName, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
-                                        Text("${type.ratedWattage}W", color = MaterialTheme.colorScheme.outline, fontSize = 12.sp)
+                                        Text("${type.ratedWattage}W", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
                                     }
                                 },
                                 onClick = {
@@ -230,7 +230,7 @@ fun AnalyticsScreen(
                                 text = "INSTALLED",
                                 fontSize = 8.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.outline,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 letterSpacing = 0.5.sp
                             )
                             Spacer(modifier = Modifier.height(4.dp))
@@ -241,7 +241,7 @@ fun AnalyticsScreen(
                                 color = MaterialTheme.colorScheme.primary
                             )
                             Spacer(modifier = Modifier.height(2.dp))
-                            Text("Township total", fontSize = 10.sp, color = MaterialTheme.colorScheme.outline)
+                            Text("Township total", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
 
@@ -259,7 +259,7 @@ fun AnalyticsScreen(
                                 text = "TOTAL LOAD",
                                 fontSize = 8.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.outline,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 letterSpacing = 0.5.sp
                             )
                             Spacer(modifier = Modifier.height(4.dp))
@@ -270,7 +270,7 @@ fun AnalyticsScreen(
                                 color = MaterialTheme.colorScheme.primary
                             )
                             Spacer(modifier = Modifier.height(2.dp))
-                            Text("Rated electrical load", fontSize = 10.sp, color = MaterialTheme.colorScheme.outline)
+                            Text("Rated electrical load", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
 
@@ -288,7 +288,7 @@ fun AnalyticsScreen(
                                 text = "PENETRATION",
                                 fontSize = 8.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.outline,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 letterSpacing = 0.5.sp
                             )
                             Spacer(modifier = Modifier.height(4.dp))
@@ -299,7 +299,7 @@ fun AnalyticsScreen(
                                 color = MaterialTheme.colorScheme.primary
                             )
                             Spacer(modifier = Modifier.height(2.dp))
-                            Text("Filtered units", fontSize = 10.sp, color = MaterialTheme.colorScheme.outline)
+                            Text("Filtered units", fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
                 }
@@ -320,7 +320,7 @@ fun AnalyticsScreen(
                             text = "BLOCK DISTRIBUTION",
                             fontSize = 9.sp,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.outline,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             letterSpacing = 1.sp
                         )
                         Spacer(modifier = Modifier.height(14.dp))
@@ -332,7 +332,7 @@ fun AnalyticsScreen(
                                     .padding(vertical = 16.dp),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text("No active distributions found.", fontSize = 11.sp, color = MaterialTheme.colorScheme.outline)
+                                Text("No active distributions found.", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             }
                         } else {
                             val maxBlockQty = blockDistribution.maxOfOrNull { it.value }?.toFloat() ?: 1.0f
@@ -388,7 +388,7 @@ fun AnalyticsScreen(
                         text = "HOUSEHOLDS WITH ${selectedAppliance.displayName.uppercase(Locale.getDefault())}",
                         fontSize = 9.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.outline,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         letterSpacing = 1.sp
                     )
                     Text(
@@ -419,9 +419,9 @@ fun AnalyticsScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Icon(Icons.Default.Inbox, "Empty", tint = MaterialTheme.colorScheme.outline, modifier = Modifier.size(36.dp))
+                                 Icon(Icons.Default.Inbox, "Empty", tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f), modifier = Modifier.size(36.dp))
                                 Spacer(modifier = Modifier.height(8.dp))
-                                Text("No households own this appliance.", fontSize = 11.sp, color = MaterialTheme.colorScheme.outline)
+                                Text("No households own this appliance.", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             }
                         }
                     }
@@ -482,7 +482,7 @@ fun AnalyticsScreen(
                                 Text(
                                     text = house.residentName,
                                     fontSize = 12.sp,
-                                    color = MaterialTheme.colorScheme.outline,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis
                                 )
@@ -504,7 +504,7 @@ fun AnalyticsScreen(
                                         text = String.format(Locale.getDefault(), "%.2f kW", contributionKw),
                                         fontSize = 10.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = MaterialTheme.colorScheme.outline
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
                                 Icon(Icons.Default.ChevronRight, "Navigate", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp))

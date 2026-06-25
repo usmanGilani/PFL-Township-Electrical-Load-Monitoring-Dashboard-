@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
-private val LightColorScheme =
+private val NordicSlateScheme =
   lightColorScheme(
     primary = GeoPrimary,
     onPrimary = GeoOnPrimary,
@@ -35,17 +35,92 @@ private val LightColorScheme =
     outlineVariant = GeoOutlineVariant
   )
 
-private val DarkColorScheme = LightColorScheme
+private val CyberpunkNeonScheme =
+  darkColorScheme(
+    primary = CyberPrimary,
+    onPrimary = CyberOnPrimary,
+    primaryContainer = CyberPrimaryContainer,
+    onPrimaryContainer = CyberOnPrimaryContainer,
+    secondary = CyberSecondary,
+    onSecondary = CyberOnSecondary,
+    secondaryContainer = CyberSecondaryContainer,
+    onSecondaryContainer = CyberOnSecondaryContainer,
+    tertiary = CyberTertiary,
+    onTertiary = CyberOnTertiary,
+    tertiaryContainer = CyberTertiaryContainer,
+    onTertiaryContainer = CyberOnTertiaryContainer,
+    background = CyberBackground,
+    onBackground = CyberOnBackground,
+    surface = CyberSurface,
+    onSurface = CyberOnSurface,
+    surfaceVariant = CyberSurfaceVariant,
+    onSurfaceVariant = CyberOnSurfaceVariant,
+    outline = CyberOutline,
+    outlineVariant = CyberOutlineVariant
+  )
+
+private val SageGardenScheme =
+  lightColorScheme(
+    primary = SagePrimary,
+    onPrimary = SageOnPrimary,
+    primaryContainer = SagePrimaryContainer,
+    onPrimaryContainer = SageOnPrimaryContainer,
+    secondary = SageSecondary,
+    onSecondary = SageOnSecondary,
+    secondaryContainer = SageSecondaryContainer,
+    onSecondaryContainer = SageOnSecondaryContainer,
+    tertiary = SageTertiary,
+    onTertiary = SageOnTertiary,
+    tertiaryContainer = SageTertiaryContainer,
+    onTertiaryContainer = SageOnTertiaryContainer,
+    background = SageBackground,
+    onBackground = SageOnBackground,
+    surface = SageSurface,
+    onSurface = SageOnSurface,
+    surfaceVariant = SageSurfaceVariant,
+    onSurfaceVariant = SageOnSurfaceVariant,
+    outline = SageOutline,
+    outlineVariant = SageOutlineVariant
+  )
+
+private val RoyalObsidianScheme =
+  darkColorScheme(
+    primary = GoldPrimary,
+    onPrimary = GoldOnPrimary,
+    primaryContainer = GoldPrimaryContainer,
+    onPrimaryContainer = GoldOnPrimaryContainer,
+    secondary = GoldSecondary,
+    onSecondary = GoldOnSecondary,
+    secondaryContainer = GoldSecondaryContainer,
+    onSecondaryContainer = GoldOnSecondaryContainer,
+    tertiary = GoldTertiary,
+    onTertiary = GoldOnTertiary,
+    tertiaryContainer = GoldTertiaryContainer,
+    onTertiaryContainer = GoldOnTertiaryContainer,
+    background = GoldBackground,
+    onBackground = GoldOnBackground,
+    surface = GoldSurface,
+    onSurface = GoldOnSurface,
+    surfaceVariant = GoldSurfaceVariant,
+    onSurfaceVariant = GoldOnSurfaceVariant,
+    outline = GoldOutline,
+    outlineVariant = GoldOutlineVariant
+  )
+
+private val LightColorScheme = NordicSlateScheme
+private val DarkColorScheme = CyberpunkNeonScheme
 
 @Composable
 fun MyApplicationTheme(
-  darkTheme: Boolean = isSystemInDarkTheme(),
-  // Disabling dynamicColor by default to prioritize the minimalist white and black theme
-  dynamicColor: Boolean = false,
+  selectedTheme: AppTheme = AppTheme.NORDIC_SLATE,
   content: @Composable () -> Unit,
 ) {
-  // Always use LightColorScheme to keep text black and background white
-  val colorScheme = LightColorScheme
+  val colorScheme = when (selectedTheme) {
+    AppTheme.NORDIC_SLATE -> NordicSlateScheme
+    AppTheme.CYBERPUNK_NEON -> CyberpunkNeonScheme
+    AppTheme.SAGE_GARDEN -> SageGardenScheme
+    AppTheme.ROYAL_OBSIDIAN -> RoyalObsidianScheme
+  }
 
   MaterialTheme(
     colorScheme = colorScheme,
@@ -53,3 +128,4 @@ fun MyApplicationTheme(
     content = content
   )
 }
+

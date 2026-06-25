@@ -60,7 +60,7 @@ fun HouseDetailScreen(
                         Text(
                             text = house?.residentName ?: "Audit Details",
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.outline
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 },
@@ -74,7 +74,7 @@ fun HouseDetailScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.padding(end = 8.dp)
                     ) {
-                        Text("Show All", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.outline)
+                        Text("Show All", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Switch(
                             checked = showZeroQuantity,
                             onCheckedChange = { showZeroQuantity = it },
@@ -141,7 +141,7 @@ fun HouseDetailScreen(
                                     "RESIDENT",
                                     fontSize = 9.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.outline,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     letterSpacing = 1.sp
                                 )
                                 Text(
@@ -163,7 +163,7 @@ fun HouseDetailScreen(
                                         "BLOCK ${record.getBlock()} • UNIT ${record.houseNo}",
                                         fontSize = 11.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = MaterialTheme.colorScheme.outline
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
                             }
@@ -198,7 +198,7 @@ fun HouseDetailScreen(
                                     "CONNECTED LOAD",
                                     fontSize = 9.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.outline,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     letterSpacing = 1.sp
                                 )
                                 Text(
@@ -217,7 +217,7 @@ fun HouseDetailScreen(
                                     "ELECTRICAL REGISTRY",
                                     fontSize = 9.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.outline,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     letterSpacing = 1.sp
                                 )
                                 Text(
@@ -229,7 +229,7 @@ fun HouseDetailScreen(
                                 Text(
                                     "across $activeCount appliance types",
                                     fontSize = 11.sp,
-                                    color = MaterialTheme.colorScheme.outline
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
                         }
@@ -347,7 +347,7 @@ fun CategorySectionCard(
                     Text(
                         "No appliances active in this category.",
                         fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.outline
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             } else {
@@ -358,10 +358,10 @@ fun CategorySectionCard(
                         .padding(vertical = 6.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("Appliance Description", modifier = Modifier.weight(2f), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.outline)
-                    Text("Qty", modifier = Modifier.weight(0.5f), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.outline, textAlign = TextAlign.Center)
-                    Text("Rating", modifier = Modifier.weight(0.7f), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.outline, textAlign = TextAlign.End)
-                    Text("Connected", modifier = Modifier.weight(0.9f), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.outline, textAlign = TextAlign.End)
+                    Text("Appliance Description", modifier = Modifier.weight(2f), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text("Qty", modifier = Modifier.weight(0.5f), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
+                    Text("Rating", modifier = Modifier.weight(0.7f), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.End)
+                    Text("Connected", modifier = Modifier.weight(0.9f), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.End)
                 }
                 
                 HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.05f))
@@ -388,7 +388,7 @@ fun CategorySectionCard(
                             Text(
                                 text = "Header: ${type.csvHeaderName}",
                                 fontSize = 9.sp,
-                                color = MaterialTheme.colorScheme.outline,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
                             )
@@ -409,7 +409,7 @@ fun CategorySectionCard(
                             text = "${type.ratedWattage} W",
                             modifier = Modifier.weight(0.7f),
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.outline,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.End
                         )
 
